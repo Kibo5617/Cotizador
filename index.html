@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizador Blinder | Oficial 2026</title>
+    <style>
+        /* CSS INTEGRADO - OPTIMIZADO PARA MÓVIL Y TABLETA */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #fcfcfc; color: #333; padding: 15px; line-height: 1.4; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        header { border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 25px; text-align: center; }
+        .logo h1 { font-size: 28px; letter-spacing: 5px; color: #1a202c; text-transform: uppercase; margin-bottom: 5px; }
+        .logo p { font-size: 10px; color: #999; letter-spacing: 2px; text-transform: uppercase; }
+        
+        .client-box { margin-top: 20px; width: 100%; max-width: 450px; margin: 20px auto; }
+        .client-box label { font-size: 10px; font-weight: bold; color: #666; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .client-box input { width: 100%; border: none; border-bottom: 2px solid #ddd; padding: 10px; font-size: 16px; outline: none; background: transparent; text-align: center; }
+
+        .main-layout { display: grid; grid-template-columns: 1fr; gap: 25px; }
+        @media (min-width: 992px) { .main-layout { grid-template-columns: 7fr 5fr; } }
+
+        .tabs-nav { display: flex; overflow-x: auto; background: #fff; border-radius: 12px 12px 0 0; border-bottom: 1px solid #eee; scrollbar-width: none; }
+        .tabs-nav::-webkit-scrollbar { display: none; }
+        .tabs-nav button { padding: 15px 20px; border: none; background: none; color: #aaa; font-weight: 600; font-size: 13px; white-space: nowrap; cursor: pointer; flex: 1; transition: 0.3s; }
+        .tabs-nav button.active { color: #1a202c; border-bottom: 4px solid #1a202c; }
+
+        .card { background: #fff; padding: 25px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .grid-inputs { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+        @media (min-width: 576px) { .grid-inputs { grid-template-columns: 1fr 1fr; } }
+        
+        label { font-size: 10px; font-weight: bold; color: #aaa; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 16px; outline: none; }
+
+        .checkbox-group { display: flex; align-items: center; gap: 12px; background: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .checkbox-group label { color: #333; margin: 0; font-size: 11px; flex: 1; line-height: 1.2; cursor: pointer; }
+        .checkbox-group input { width: 22px; height: 22px; cursor: pointer; }
+
+        .btn-add { background: #1a202c; color: #fff; border: none; width: 100%; padding: 18px; border-radius: 8px; font-weight: bold; text-transform: uppercase; cursor: pointer; margin-top: 10px; font-size: 12px; letter-spacing: 1px; }
+
+        .sidebar { background: #fff; border-top: 10px solid #1a202c; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .sidebar h3 { text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; font-size: 18px; }
+        
+        .item-row { position: relative; padding: 15px 0 15px 35px; border-bottom: 1px solid #f3f4f6; }
+        .btn-del { position: absolute; left: 0; top: 15px; color: #f87171; border: none; background: none; font-weight: bold; cursor: pointer; font-size: 20px; line-height: 1; }
+        .item-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 12px; margin-bottom: 5px; text-transform: uppercase; }
+        .item-detail { display: flex; justify-content: space-between; font-size: 11px; color: #718096; border-left: 2px solid #edf2f7; padding-left: 10px; margin-top: 4px; }
+
+        .summary-box { border-top: 2px solid #eee; padding-top: 20px; margin-top: 20px; }
+        .summary-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px; align-items: center; }
+        #desc-perc { width: 85px; text-align: center; padding: 6px; border: 1px solid #cbd5e0; border-radius: 6px; font-weight: bold; margin-left: 10px; }
+        
+        .total-row { display: flex; justify-content: space-between; font-size: 26px; font-weight: bold; color: #1a202c; border-top: 2px solid #1a202c; padding-top: 15px; margin-top: 10px; }
+
+        .manual-card { background: #f8f9fa; border: 2px dashed #e9ecef; padding: 20px; border-radius: 12px; margin-top: 20px; }
+        
+        @media print { .no-print { display: none !important; } .sidebar { border: 1px solid #eee; box-shadow: none; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="logo">
+            <h1>BLINDER</h1>
+            <p>Cocinas & Espacios de Autor</p>
+        </div>
+        <div class="client-box">
+            <label>Nombre del Cliente / Referencia</label>
+            <input type="text" id="nombre-cliente" placeholder="Ej. Familia Reséndiz">
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <div class="no-print">
+            <div class="tabs-nav">
+                <button onclick="showTab('cocina')" id="btn-cocina" class="active">Cocinas</button>
+                <button onclick="showTab('closet')" id="btn-closet">Closets</button>
+                <button onclick="showTab('walkin')" id="btn-walkin">Walk-in</button>
+                <button onclick="showTab('banio')" id="btn-banio">Baños</button>
+                <button onclick="showTab('tv')" id="btn-tv">MTV (TV)</button>
+            </div>
+
+            <div class="card">
+                <div id="sec-cocina" class="tab-content">
+                    <div class="grid-inputs">
+                        <div>
+                            <label>Acabado</label>
+                            <select id="c-tipo">
+                                <option value="12320">Blanco ($12,320)</option>
+                                <option value="14000">Bitono ($14,000)</option>
+                                <option value="15300">Full Color ($15,300)</option>
+                            </select>
+                        </div>
+                        <div><label>ML Cocina (Base/Sup)</label><input type="number" id="c-ml" placeholder="0.00"></div>
+                    </div>
+                    <div class="grid-inputs">
+                        <div>
+                            <label>Barra / Isla (ML)</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" id="c-isla-ml" placeholder="ml" style="flex:2">
+                                <select id="c-isla-perc" style="flex:1">
+                                    <option value="0.50">50%</option>
+                                    <option value="0.65">65%</option>
+                                    <option value="0.75">75%</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div><label>Torres Extras (ML)</label><input type="number" id="c-torre-ml" placeholder="ml extra"></div>
+                    </div>
+                    <div class="grid-inputs">
+                        <div><label>Luz LED (ML)</label><input type="number" id="c-led" placeholder="ml"></div>
+                        <div><label>Vidrio Filtrasol (m²)</label><input type="number" id="c-vidrio" placeholder="m²"></div>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="c-sup">
+                        <label for="c-sup">MUEBLES SUPERIORES > 1M ALTURA (+15%)</label>
+                    </div>
+                    <button class="btn-add" onclick="add('cocina')">Agregar Cocina</button>
+                </div>
+
+                <div id="sec-closet" class="tab-content" style="display:none">
+                    <div class="grid-inputs">
+                        <div>
+                            <label>Acabado</label>
+                            <select id="cl-tipo">
+                                <option value="16500">Blanco ($16,500)</option>
+                                <option value="17350">Blanco con vistas amaderadas</option>
+                                <option value="19850">Full Color ($19,850)</option>
+                            </select>
+                        </div>
+                        <div><label>ML Closet</label><input type="number" id="cl-ml" placeholder="0.00"></div>
+                    </div>
+                    <div class="grid-inputs">
+                        <div>
+                            <label>Zapatero / Alajero (ML)</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" id="cl-extra-ml" placeholder="ml" style="flex:2">
+                                <select id="cl-extra-perc" style="flex:1">
+                                    <option value="0.50">50%</option>
+                                    <option value="0.65">65%</option>
+                                    <option value="0.75">75%</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div><label>Luz LED (ML)</label><input type="number" id="cl-led"></div>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="cl-alt">
+                        <label for="cl-alt">ALTURA ESPECIAL 3.0M - 3.4M (+10%)</label>
+                    </div>
+                    <button class="btn-add" onclick="add('closet')">Agregar Closet</button>
+                </div>
+
+                <div id="sec-walkin" class="tab-content" style="display:none">
+                    <div class="grid-inputs">
+                        <div>
+                            <label>Acabado</label>
+                            <select id="wi-tipo">
+                                <option value="12320">Blanco ($12,320)</option>
+                                <option value="14500">Bitono ($14,500)</option>
+                                <option value="16610">Full Color ($16,610)</option>
+                            </select>
+                        </div>
+                        <div><label>ML Walk-in</label><input type="number" id="wi-ml" placeholder="0.00"></div>
+                    </div>
+                    <div class="grid-inputs">
+                        <div>
+                            <label>Zapatero / Alajero (ML)</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" id="wi-extra-ml" placeholder="ml" style="flex:2">
+                                <select id="wi-extra-perc" style="flex:1">
+                                    <option value="0.50">50%</option>
+                                    <option value="0.65">65%</option>
+                                    <option value="0.75">75%</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div><label>Luz LED (ML)</label><input type="number" id="wi-led"></div>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="wi-alt">
+                        <label for="wi-alt">ALTURA ESPECIAL 3.0M - 3.4M (+10%)</label>
+                    </div>
+                    <button class="btn-add" onclick="add('walkin')">Agregar Walk-in</button>
+                </div>
+
+                <div id="sec-banio" class="tab-content" style="display:none">
+                    <div class="grid-inputs">
+                        <div>
+                            <label>Referencia de Color</label>
+                            <select id="b-base">
+                                <option value="12320">Blanco</option>
+                                <option value="15300">Full Color</option>
+                            </select>
+                        </div>
+                        <div><label>ML de Mueble</label><input type="number" id="b-ml" placeholder="0.00"></div>
+                    </div>
+                    <div class="grid-inputs">
+                        <div>
+                            <label>Tipo de Instalación</label>
+                            <select id="b-tipo" onchange="updateBanioPerc()">
+                                <option value="volado">Volado</option>
+                                <option value="piso">A Piso</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Porcentaje Coste</label>
+                            <select id="b-perc">
+                                <option value="0.50">50%</option>
+                                <option value="0.60">60%</option>
+                                <option value="0.70">70%</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn-add" onclick="add('banio')">Agregar Baño</button>
+                </div>
+                
+                <div id="sec-tv" class="tab-content" style="display:none">
+                    <div class="grid-inputs">
+                        <div><label>Base Color</label><select id="tv-base"><option value="12320">Blanco</option><option value="15300">Full Color</option></select></div>
+                        <div><label>ML Mueble Principal</label><input type="number" id="tv-ml" placeholder="0.00"></div>
+                    </div>
+                    <div class="grid-inputs">
+                        <div><label>Lambrín (Pzs)</label><input type="number" id="tv-lam" placeholder="Cant."></div>
+                        <div><label>Placa PVC (Pzs)</label><input type="number" id="tv-pvc" placeholder="Cant."></div>
+                    </div>
+                    <div class="grid-inputs">
+                        <div><label>Luz LED (ML)</label><input type="number" id="tv-led"></div>
+                        <div>
+                            <label>Fondo Melamínico</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" id="tv-f-cant" placeholder="Hojas" style="flex:1">
+                                <select id="tv-f-tipo" style="flex:2">
+                                    <option value="2450">Blanco</option>
+                                    <option value="3550">Full Color</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-inputs">
+                        <div>
+                            <label>Repisas 10cm (ML x Cant)</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" id="tv-r-ml" placeholder="ml" style="flex:1">
+                                <input type="number" id="tv-r-cant" placeholder="Cant" style="flex:1">
+                            </div>
+                        </div>
+                        <div>
+                            <label>Librero (Ancho x Alto x Color)</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" id="tv-l-an" placeholder="An" style="flex:1">
+                                <input type="number" id="tv-l-al" placeholder="Al" style="flex:1">
+                                <select id="tv-l-c" style="flex:1"><option value="5550">B</option><option value="6550">FC</option></select>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-add" onclick="add('tv')">Agregar MTV</button>
+                </div>
+            </div>
+
+            <div class="manual-card no-print">
+                <label style="color:#666; margin-bottom:10px;">Conceptos Adicionales Manuales</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="m-desc" placeholder="Descripción (Ej. Flete)" style="flex:3">
+                    <input type="number" id="m-precio" placeholder="Precio $" style="flex:1">
+                    <button onclick="addManual()" style="background:#333; color:white; padding:0 20px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <h3>Presupuesto</h3>
+            <div id="view-cliente" style="font-size:11px; font-weight:bold; color:#1a202c; margin-bottom:15px; text-transform:uppercase;"></div>
+            <div id="lista-resumen">
+                <p style="text-align:center; color:#ccc; padding:40px;">No hay elementos agregados</p>
+            </div>
+            
+            <div class="summary-box">
+                <div class="summary-row"><span>SUBTOTAL:</span><span id="sub-val">$0.00</span></div>
+                <div class="summary-row" style="color:#3182ce">
+                    <span>DESCUENTO (%): <input type="number" id="desc-perc" value="0" oninput="update()" class="no-print"></span>
+                    <span id="desc-val">-$0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>TOTAL:</span>
+                    <span id="total-text">$0.00</span>
+                </div>
+            </div>
+            <button class="btn-add no-print" onclick="window.print()" style="margin-top:20px;">GENERAR PDF / IMPRIMIR</button>
+            <button class="no-print" onclick="limpiar()" style="width:100%; background:none; border:none; color:#f87171; font-size:10px; cursor:pointer; margin-top:10px; text-transform:uppercase;">Borrar Todo</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let cart = [];
+    const fmt = v => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v);
+    const cLED = (m, b) => (!m || m <= 0) ? 0 : (m <= 2) ? b : b + ((m - 2) * 1100);
+
+    function showTab(c) {
+        document.querySelectorAll('.tab-content').forEach(e => e.style.display = 'none');
+        document.querySelectorAll('.tabs-nav button').forEach(e => e.classList.remove('active'));
+        document.getElementById('sec-' + c).style.display = 'block';
+        document.getElementById('btn-' + c).classList.add('active');
+    }
+
+    function updateBanioPerc() {
+        const t = document.getElementById('b-tipo').value;
+        const s = document.getElementById('b-perc');
+        s.innerHTML = t === 'volado' ? 
+            '<option value="0.50">50%</option><option value="0.60">60%</option><option value="0.70">70%</option>' :
+            '<option value="0.65">65%</option><option value="0.75">75%</option><option value="0.85">85%</option>';
+    }
+
+    function add(tipo) {
+        let it = { id: Date.now(), cat: "", total: 0, d: [] };
+        
+        if(tipo === 'cocina') {
+            const ml = parseFloat(document.getElementById('c-ml').value) || 0;
+            const b = parseFloat(document.getElementById('c-tipo').value);
+            if(ml <= 0) return alert("Ingrese ML");
+            const nom = document.getElementById('c-tipo').selectedOptions[0].text.split('(')[0];
+            let c = ml * b; let det = `Cuerpo (${ml}ml)`;
+            if(document.getElementById('c-sup').checked) { c *= 1.15; det += " + Altura > 1m"; }
+            it.cat = "COCINA " + nom;
+            it.d.push({ n: det, s: c });
+            const isl = parseFloat(document.getElementById('c-isla-ml').value) || 0;
+            if(isl > 0) it.d.push({ n: `Isla (${isl}ml)`, s: isl * b * parseFloat(document.getElementById('c-isla-perc').value) });
+            const tor = parseFloat(document.getElementById('c-torre-ml').value) || 0;
+            if(tor > 0) it.d.push({ n: `Torres (${tor}ml)`, s: tor * b * 1.35 });
+            const led = parseFloat(document.getElementById('c-led').value) || 0;
+            if(led > 0) it.d.push({ n: `Luz LED (${led}m)`, s: cLED(led, 3450) });
+            const vid = parseFloat(document.getElementById('c-vidrio').value) || 0;
+            if(vid > 0) it.d.push({ n: `Vidrio Templado (${vid}m²)`, s: vid * 6250 });
+        }
+
+        if(tipo === 'closet') {
+            const ml = parseFloat(document.getElementById('cl-ml').value) || 0;
+            const b = parseFloat(document.getElementById('cl-tipo').value);
+            if(ml <= 0) return alert("Ingrese ML");
+            let c = ml * b; let det = `Cuerpo (${ml}ml)`;
+            if(document.getElementById('cl-alt').checked) { c *= 1.10; det += " + Altura Especial"; }
+            it.cat = "CLOSET " + document.getElementById('cl-tipo').selectedOptions[0].text.split('(')[0];
+            it.d.push({ n: det, s: c });
+            const ext = parseFloat(document.getElementById('cl-extra-ml').value) || 0;
+            if(ext > 0) it.d.push({ n: `Zapatero (${ext}ml)`, s: ext * b * parseFloat(document.getElementById('cl-extra-perc').value) });
+            const led = parseFloat(document.getElementById('cl-led').value) || 0;
+            if(led > 0) it.d.push({ n: `Luz LED (${led}m)`, s: cLED(led, 3450) });
+        }
+
+        if(tipo === 'walkin') {
+            const ml = parseFloat(document.getElementById('wi-ml').value) || 0;
+            const b = parseFloat(document.getElementById('wi-tipo').value);
+            if(ml <= 0) return alert("Ingrese ML");
+            let c = ml * b; let det = `Estructura (${ml}ml)`;
+            if(document.getElementById('wi-alt').checked) { c *= 1.10; det += " + Altura Especial"; }
+            it.cat = "WALK-IN " + document.getElementById('wi-tipo').selectedOptions[0].text.split('(')[0];
+            it.d.push({ n: det, s: c });
+            const ext = parseFloat(document.getElementById('wi-extra-ml').value) || 0;
+            if(ext > 0) it.d.push({ n: `Zapatero (${ext}ml)`, s: ext * b * parseFloat(document.getElementById('wi-extra-perc').value) });
+            const led = parseFloat(document.getElementById('wi-led').value) || 0;
+            if(led > 0) it.d.push({ n: `Luz LED (${led}m)`, s: cLED(led, 3450) });
+        }
+
+        if(tipo === 'banio') {
+            const ml = parseFloat(document.getElementById('b-ml').value) || 0;
+            if(ml <= 0) return alert("Ingrese ML");
+            const b = parseFloat(document.getElementById('b-base').value);
+            const p = parseFloat(document.getElementById('b-perc').value);
+            const t = document.getElementById('b-tipo').value;
+            it.cat = "BAÑO " + (t === 'volado' ? 'VOLADO' : 'A PISO');
+            it.d.push({ n: `Mueble ${ml}ml con cubierta`, s: ml * b * p });
+        }
+
+        if(tipo === 'tv') {
+            const ml = parseFloat(document.getElementById('tv-ml').value) || 0;
+            const b = parseFloat(document.getElementById('tv-base').value);
+            it.cat = "MTV (TV)";
+            if(ml > 0) it.d.push({ n: `Mueble (${ml}ml)`, s: ml * b * 0.60 });
+            const lam = parseInt(document.getElementById('tv-lam').value) || 0;
+            if(lam > 0) it.d.push({ n: `Lambrín (${lam} pzs)`, s: (lam <= 4) ? 2000 : 2000 + (lam-4)*500 });
+            const pvc = parseInt(document.getElementById('tv-pvc').value) || 0;
+            if(pvc > 0) it.d.push({ n: `Placa PVC (${pvc} pzs)`, s: pvc * 2690 });
+            const led = parseFloat(document.getElementById('tv-led').value) || 0;
+            if(led > 0) it.d.push({ n: `Luz LED (${led}m)`, s: cLED(led, 3000) });
+            const fc = parseInt(document.getElementById('tv-f-cant').value) || 0;
+            if(fc > 0) it.d.push({ n: `Fondo Melamínico (${fc} hojas)`, s: fc * parseFloat(document.getElementById('tv-f-tipo').value) });
+            const rml = parseFloat(document.getElementById('tv-r-ml').value) || 0;
+            const rc = parseInt(document.getElementById('tv-r-cant').value) || 0;
+            if(rc > 0) it.d.push({ n: `${rc} Repisas 10cm`, s: rc * (Math.max(rml, 0.5) * 3150) });
+            const lan = parseFloat(document.getElementById('tv-l-an').value) || 0;
+            const lal = parseFloat(document.getElementById('tv-l-al').value) || 0;
+            if(lan > 0 && lal > 0) {
+                const m2 = lan * lal;
+                it.d.push({ n: `Librero lateral (${m2.toFixed(2)}m²)`, s: Math.max(m2, 1) * parseFloat(document.getElementById('tv-l-c').value) });
+            }
+        }
+
+        it.total = it.d.reduce((a, b) => a + b.s, 0);
+        if(it.total > 0) { cart.push(it); update(); }
+    }
+
+    function addManual() {
+        const d = document.getElementById('m-desc').value;
+        const p = parseFloat(document.getElementById('m-precio').value);
+        if(!d || isNaN(p)) return;
+        cart.push({ id: Date.now(), cat: "ADICIONAL", total: p, d: [{ n: d, s: p }] });
+        document.getElementById('m-desc').value = ""; document.getElementById('m-precio').value = "";
+        update();
+    }
+
+    function update() {
+        const list = document.getElementById('lista-resumen');
+        const cli = document.getElementById('nombre-cliente').value;
+        document.getElementById('view-cliente').innerText = cli ? "CLIENTE: " + cli : "";
+        list.innerHTML = ""; let sub = 0;
+        if(cart.length === 0) list.innerHTML = '<p style="text-align:center; color:#ccc; padding:40px;">No hay elementos agregados</p>';
+        cart.forEach(it => {
+            sub += it.total;
+            let h = `<div class="item-row"><button class="btn-del no-print" onclick="del(${it.id})">✕</button><div class="item-header"><span>${it.cat}</span><span>${fmt(it.total)}</span></div>`;
+            it.d.forEach(d => h += `<div class="item-detail"><span>${d.n}</span><span>${fmt(d.s)}</span></div>`);
+            list.innerHTML += h + `</div>`;
+        });
+        const pD = parseFloat(document.getElementById('desc-perc').value) || 0;
+        const mD = sub * (pD / 100);
+        document.getElementById('sub-val').innerText = fmt(sub);
+        document.getElementById('desc-val').innerText = `-${fmt(mD)}`;
+        document.getElementById('total-text').innerText = fmt(sub - mD);
+    }
+
+    function del(id) { cart = cart.filter(i => i.id !== id); update(); }
+    function limpiar() { if(confirm("¿Borrar cotización?")) { cart = []; update(); } }
+</script>
+</body>
+</html>
